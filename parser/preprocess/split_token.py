@@ -7,8 +7,8 @@ def split_token(scripts_rows: List[str]) -> Deque[str]:
     """
     ロードしたスクリプトのリストをトークンに分割する。
     　・コメントの除去もここで行う。
-    　・スプリット対象: ',' or スペース or 改行
-    　・スプリット対象もトークンに含まれる。
+    　・スプリット対象: ',' or '(', or ')' or スペース or 改行
+    　・文字のスプリット対象はトークンに含まれる。
     """
     # 正規表現の準備
     re_comment_block = re.compile(r'/\*.*?\*/')
@@ -27,7 +27,7 @@ def split_token(scripts_rows: List[str]) -> Deque[str]:
     # トークン化
     deque_result: Deque[str] = deque()
     for script in scripts_rows:
-        # [~]は列のブロックになり、,や/も例外扱いとなるので、
+        # [~]は列名のブロックになり、スプリット対象の例外扱いとなるので、
         # まずはそこのところを分割、抽出
         index_start = 0
         script_raw = script
@@ -55,12 +55,13 @@ def split_by_re(script: str, re_split: re.Pattern) -> List[str]:
     script_raw = script
     list_result: List[str] = []
     for re_result_split in re_split.finditer(script):
-        # スプリット対象より前のものを抽出
+        # スプリット対象より前のものを格納
         list_result.append(script[index_start:re_result_split.start()])
-        # スプリット対象を抽出
+        # スプリット対象を格納
         list_result.append(re_result_split.group())
         # スプリット対象より後の文字列でscriptを更新
         script = script_raw[re_result_split.end():]
 
-    list_result.append(script)
+    if len(script):
+        list_result.append(script)
     return list_result
