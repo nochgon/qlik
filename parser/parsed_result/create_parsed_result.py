@@ -1,10 +1,11 @@
-from typing import Deque, Tuple
+from typing import Deque, Tuple, Optional
 import traceback
 
 from .parsed_result import ParsedResult
 
 
-def create(deques_tokens: Deque[Tuple[int, Deque[str]]]) -> Union(ParsedResult, None):
+def create(deques_tokens: Deque[Tuple[int, Deque[str]]]
+           ) -> Optional[ParsedResult]:
     try:
         return ParsedResult(deques_tokens)
     except Exception as e:
